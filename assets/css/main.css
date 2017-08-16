@@ -1721,7 +1721,7 @@
 	}
 
 	h2 {
-		font-size: 1.75em;
+		font-size: 2.75em;
 	}
 
 	h3 {
@@ -3440,7 +3440,7 @@
 			-webkit-pointer-events: none;
 			-ms-pointer-events: none;
 			pointer-events: none;
-			background-color: #242943;
+			/*background-color: #242943;*/
 			content: '';
 			display: block;
 			height: 100%;
@@ -3504,7 +3504,7 @@
 				}
 
 				#banner > .inner .content p {
-					font-size: 0.7em;
+					font-size: 1.2em;
 					font-weight: 600;
 					letter-spacing: 0.25em;
 					text-transform: uppercase;
