@@ -1,351 +1,242 @@
 /*
-	Forty by HTML5 UP
+	Astral by HTML5 UP
 	html5up.net | @ajlkn
 	Free for personal and commercial use under the CCA 3.0 license (html5up.net/license)
 */
 
 (function($) {
 
-	skel.breakpoints({
-		xlarge: '(max-width: 1680px)',
-		large: '(max-width: 1280px)',
-		medium: '(max-width: 980px)',
-		small: '(max-width: 736px)',
-		xsmall: '(max-width: 480px)',
-		xxsmall: '(max-width: 360px)'
-	});
+	var settings = {
 
-	/**
-	 * Applies parallax scrolling to an element's background image.
-	 * @return {jQuery} jQuery object.
-	 */
-	$.fn._parallax = (skel.vars.browser == 'ie' || skel.vars.browser == 'edge' || skel.vars.mobile) ? function() { return $(this) } : function(intensity) {
+		// Speed to resize panel.
+			resizeSpeed: 600,
 
-		var	$window = $(window),
-			$this = $(this);
+		// Speed to fade in/out.
+			fadeSpeed: 300,
 
-		if (this.length == 0 || intensity === 0)
-			return $this;
+		// Size factor.
+			sizeFactor: 11.5,
 
-		if (this.length > 1) {
+		// Minimum point size.
+			sizeMin: 15,
 
-			for (var i=0; i < this.length; i++)
-				$(this[i])._parallax(intensity);
-
-			return $this;
-
-		}
-
-		if (!intensity)
-			intensity = 0.25;
-
-		$this.each(function() {
-
-			var $t = $(this),
-				on, off;
-
-			on = function() {
-
-				$t.css('background-position', 'center 100%, center 100%, center 0px');
-
-				$window
-					.on('scroll._parallax', function() {
-
-						var pos = parseInt($window.scrollTop()) - parseInt($t.position().top);
-
-						$t.css('background-position', 'center ' + (pos * (-1 * intensity)) + 'px');
-
-					});
-
-			};
-
-			off = function() {
-
-				$t
-					.css('background-position', '');
-
-				$window
-					.off('scroll._parallax');
-
-			};
-
-			skel.on('change', function() {
-
-				if (skel.breakpoint('medium').active)
-					(off)();
-				else
-					(on)();
-
-			});
-
-		});
-
-		$window
-			.off('load._parallax resize._parallax')
-			.on('load._parallax resize._parallax', function() {
-				$window.trigger('scroll');
-			});
-
-		return $(this);
+		// Maximum point size.
+			sizeMax: 20
 
 	};
 
-	$(function() {
+	var $window = $(window);
 
-		var	$window = $(window),
-			$body = $('body'),
-			$wrapper = $('#wrapper'),
-			$header = $('#header'),
-			$banner = $('#banner');
+	$window.on('load', function() {
 
-		// Disable animations/transitions until the page has loaded.
-			$body.addClass('is-loading');
-
-			$window.on('load pageshow', function() {
-				window.setTimeout(function() {
-					$body.removeClass('is-loading');
-				}, 100);
-			});
-
-		// Clear transitioning state on unload/hide.
-			$window.on('unload pagehide', function() {
-				window.setTimeout(function() {
-					$('.is-transitioning').removeClass('is-transitioning');
-				}, 250);
-			});
-
-		// Fix: Enable IE-only tweaks.
-			if (skel.vars.browser == 'ie' || skel.vars.browser == 'edge')
-				$body.addClass('is-ie');
-
-		// Fix: Placeholder polyfill.
-			$('form').placeholder();
-
-		// Prioritize "important" elements on medium.
-			skel.on('+medium -medium', function() {
-				$.prioritize(
-					'.important\\28 medium\\29',
-					skel.breakpoint('medium').active
-				);
-			});
-
-		// Scrolly.
-			$('.scrolly').scrolly({
-				offset: function() {
-					return $header.height() - 2;
+		skel
+			.breakpoints({
+				desktop: '(min-width: 737px)',
+				mobile: '(max-width: 736px)'
+			})
+			.viewport({
+				breakpoints: {
+					desktop: {
+						width: 1080,
+						scalable: false
+					}
 				}
-			});
+			})
+			.on('+desktop', function() {
 
-		// Tiles.
-			var $tiles = $('.tiles > article');
+				var	$body = $('body'),
+					$main = $('#main'),
+					$panels = $main.find('.panel'),
+					$hbw = $('html,body,window'),
+					$footer = $('#footer'),
+					$wrapper = $('#wrapper'),
+					$nav = $('#nav'), $nav_links = $nav.find('a'),
+					$jumplinks = $('.jumplink'),
+					$form = $('form'),
+					panels = [],
+					activePanelId = null,
+					firstPanelId = null,
+					isLocked = false,
+					hash = window.location.hash.substring(1);
 
-			$tiles.each(function() {
+				if (skel.vars.mobile) {
 
-				var $this = $(this),
-					$image = $this.find('.image'), $img = $image.find('img'),
-					$link = $this.find('.link'),
-					x;
+					settings.fadeSpeed = 0;
+					settings.resizeSpeed = 0;
+					$nav_links.find('span').remove();
 
-				// Image.
+				}
 
-					// Set image.
-						$this.css('background-image', 'url(' + $img.attr('src') + ')');
+				// Body.
+					$body._resize = function() {
+						var factor = ($window.width() * $window.height()) / (1440 * 900);
+						$body.css('font-size', Math.min(Math.max(Math.floor(factor * settings.sizeFactor), settings.sizeMin), settings.sizeMax) + 'pt');
+						$main.height(panels[activePanelId].outerHeight());
+						$body._reposition();
+					};
 
-					// Set position.
-						if (x = $img.data('position'))
-							$image.css('background-position', x);
+					$body._reposition = function() {
+						if (skel.vars.mobile && (window.orientation == 0 || window.orientation == 180))
+							$wrapper.css('padding-top', Math.max((($window.height() - (panels[activePanelId].outerHeight() + $footer.outerHeight())) / 2) - $nav.height(), 30) + 'px');
+						else
+							$wrapper.css('padding-top', ((($window.height() - panels[firstPanelId].height()) / 2) - $nav.height()) + 'px');
+					};
 
-					// Hide original.
-						$image.hide();
+				// Panels.
+					$panels.each(function(i) {
+						var t = $(this), id = t.attr('id');
 
-				// Link.
-					if ($link.length > 0) {
+						panels[id] = t;
 
-						$x = $link.clone()
-							.text('')
-							.addClass('primary')
-							.appendTo($this);
+						if (i == 0) {
 
-						$link = $link.add($x);
+							firstPanelId = id;
+							activePanelId = id;
 
-						$link.on('click', function(event) {
+						}
+						else
+							t.hide();
 
-							var href = $link.attr('href');
+						t._activate = function(instant) {
 
-							// Prevent default.
-								event.stopPropagation();
-								event.preventDefault();
+							// Check lock state and determine whether we're already at the target.
+								if (isLocked
+								||	activePanelId == id)
+									return false;
 
-							// Start transitioning.
-								$this.addClass('is-transitioning');
-								$wrapper.addClass('is-transitioning');
+							// Lock.
+								isLocked = true;
 
-							// Redirect.
-								window.setTimeout(function() {
+							// Change nav link (if it exists).
+								$nav_links.removeClass('active');
+								$nav_links.filter('[href="#' + id + '"]').addClass('active');
 
-									if ($link.attr('target') == '_blank')
-										window.open(href);
-									else
-										location.href = href;
+							// Change hash.
+								if (i == 0)
+									window.location.hash = '#';
+								else
+									window.location.hash = '#' + id;
 
-								}, 500);
+							// Add bottom padding.
+								var x = parseInt($wrapper.css('padding-top')) +
+										panels[id].outerHeight() +
+										$nav.outerHeight() +
+										$footer.outerHeight();
+
+								if (x > $window.height())
+									$wrapper.addClass('tall');
+								else
+									$wrapper.removeClass('tall');
+
+							// Fade out active panel.
+								$footer.fadeTo(settings.fadeSpeed, 0.0001);
+								panels[activePanelId].fadeOut(instant ? 0 : settings.fadeSpeed, function() {
+
+									// Set new active.
+										activePanelId = id;
+
+										// Force scroll to top.
+											$hbw.animate({
+												scrollTop: 0
+											}, settings.resizeSpeed, 'swing');
+
+										// Reposition.
+											$body._reposition();
+
+										// Resize main to height of new panel.
+											$main.animate({
+												height: panels[activePanelId].outerHeight()
+											}, instant ? 0 : settings.resizeSpeed, 'swing', function() {
+
+												// Fade in new active panel.
+													$footer.fadeTo(instant ? 0 : settings.fadeSpeed, 1.0);
+													panels[activePanelId].fadeIn(instant ? 0 : settings.fadeSpeed, function() {
+
+														// Unlock.
+															isLocked = false;
+
+													});
+											});
+
+								});
+
+						};
+
+					});
+
+				// Nav + Jumplinks.
+					$nav_links.add($jumplinks).click(function(e) {
+						var t = $(this), href = t.attr('href'), id;
+
+						if (href.substring(0,1) == '#') {
+
+							e.preventDefault();
+							e.stopPropagation();
+
+							id = href.substring(1);
+
+							if (id in panels)
+								panels[id]._activate();
+
+						}
+
+					});
+
+				// Window.
+					$window
+						.resize(function() {
+
+							if (!isLocked)
+								$body._resize();
 
 						});
 
-					}
+					$window
+						.on('orientationchange', function() {
 
-			});
+							if (!isLocked)
+								$body._reposition();
 
-		// Header.
-			if (skel.vars.IEVersion < 9)
-				$header.removeClass('alt');
+						});
 
-			if ($banner.length > 0
-			&&	$header.hasClass('alt')) {
+					if (skel.vars.IEVersion < 9)
+						$window
+							.on('resize', function() {
+								$wrapper.css('min-height', $window.height());
+							});
 
-				$window.on('resize', function() {
-					$window.trigger('scroll');
-				});
+				// Fix: Placeholder polyfill.
+					$('form').placeholder();
 
-				$window.on('load', function() {
-
-					$banner.scrollex({
-						bottom:		$header.height() + 10,
-						terminate:	function() { $header.removeClass('alt'); },
-						enter:		function() { $header.addClass('alt'); },
-						leave:		function() { $header.removeClass('alt'); $header.addClass('reveal'); }
+				// Prioritize "important" elements on mobile.
+					skel.on('+mobile -mobile', function() {
+						$.prioritize(
+							'.important\\28 mobile\\29',
+							skel.breakpoint('mobile').active
+						);
 					});
 
-					window.setTimeout(function() {
-						$window.triggerHandler('scroll');
-					}, 100);
+				// CSS polyfills (IE<9).
+					if (skel.vars.IEVersion < 9)
+						$(':last-child').addClass('last-child');
 
-				});
+				// Init.
+					$window
+						.trigger('resize');
 
-			}
+					if (hash && hash in panels)
+						panels[hash]._activate(true);
 
-		// Banner.
-			$banner.each(function() {
+					$wrapper.fadeTo(400, 1.0);
 
-				var $this = $(this),
-					$image = $this.find('.image'), $img = $image.find('img');
-
-				// Parallax.
-					$this._parallax(0.275);
-
-				// Image.
-					if ($image.length > 0) {
-
-						// Set image.
-							$this.css('background-image', 'url(' + $img.attr('src') + ')');
-
-						// Hide original.
-							$image.hide();
-
-					}
-
-			});
-
-		// Menu.
-			var $menu = $('#menu'),
-				$menuInner;
-
-			$menu.wrapInner('<div class="inner"></div>');
-			$menuInner = $menu.children('.inner');
-			$menu._locked = false;
-
-			$menu._lock = function() {
-
-				if ($menu._locked)
-					return false;
-
-				$menu._locked = true;
+			})
+			.on('-desktop', function() {
 
 				window.setTimeout(function() {
-					$menu._locked = false;
-				}, 350);
+					location.reload(true);
+				}, 50);
 
-				return true;
-
-			};
-
-			$menu._show = function() {
-
-				if ($menu._lock())
-					$body.addClass('is-menu-visible');
-
-			};
-
-			$menu._hide = function() {
-
-				if ($menu._lock())
-					$body.removeClass('is-menu-visible');
-
-			};
-
-			$menu._toggle = function() {
-
-				if ($menu._lock())
-					$body.toggleClass('is-menu-visible');
-
-			};
-
-			$menuInner
-				.on('click', function(event) {
-					event.stopPropagation();
-				})
-				.on('click', 'a', function(event) {
-
-					var href = $(this).attr('href');
-
-					event.preventDefault();
-					event.stopPropagation();
-
-					// Hide.
-						$menu._hide();
-
-					// Redirect.
-						window.setTimeout(function() {
-							window.location.href = href;
-						}, 250);
-
-				});
-
-			$menu
-				.appendTo($body)
-				.on('click', function(event) {
-
-					event.stopPropagation();
-					event.preventDefault();
-
-					$body.removeClass('is-menu-visible');
-
-				})
-				.append('<a class="close" href="#menu">Close</a>');
-
-			$body
-				.on('click', 'a[href="#menu"]', function(event) {
-
-					event.stopPropagation();
-					event.preventDefault();
-
-					// Toggle.
-						$menu._toggle();
-
-				})
-				.on('click', function(event) {
-
-					// Hide.
-						$menu._hide();
-
-				})
-				.on('keydown', function(event) {
-
-					// Hide on escape.
-						if (event.keyCode == 27)
-							$menu._hide();
-
-				});
+			});
 
 	});
 

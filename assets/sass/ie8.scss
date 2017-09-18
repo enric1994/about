@@ -4,47 +4,38 @@
 @import 'libs/skel';
 
 /*
-	Forty by HTML5 UP
+	Astral by HTML5 UP
 	html5up.net | @ajlkn
 	Free for personal and commercial use under the CCA 3.0 license (html5up.net/license)
 */
 
-/* Button */
+/* Basic */
 
-	.button {
-		border: solid 2px !important;
+	body {
+		background-image: url('images/bg.jpg');
+		background-size: cover;
+		-ms-behavior: url('assets/js/ie/backgroundsize.min.htc');
+	}
 
-		&.next {
-			padding-right: 1.75em;
+/* Section/Article */
 
-			&:before, &:after {
-				display: none;
+	section, article {
+		> .last-child,
+		&.last-child {
+			margin-bottom: 0;
+		}
+	}
+
+/* Nav */
+
+	#nav {
+		a {
+			span {
+				display: none !important;
+			}
+
+			&:before {
+				font-size: 1.75em;
 			}
 		}
-	}
-
-/* Tiles */
-
-	.tiles {
-		article {
-			width: 50%;
-			-ms-behavior: url('assets/js/ie/backgroundsize.min.htc');
-			background-size: cover;
-		}
-	}
-
-/* Banner */
-
-	#banner {
-		-ms-behavior: url('assets/js/ie/backgroundsize.min.htc');
-
-		&:after {
-			display: none;
-		}
-	}
-
-/* Menu */
-
-	#menu {
-		background: _palette(bg);
 	}
