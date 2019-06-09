@@ -5,6 +5,7 @@
 	<title>Enric Moreu</title>
 	<meta charset="utf-8" />
 	<meta name="viewport" content="width=device-width" />
+	<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js"></script>
 	<!--[if lte IE 8]><script src="assets/js/ie/html5shiv.js"></script><![endif]-->
 	<link rel="stylesheet" href="assets/css/main.css" />
 	<noscript>
@@ -55,7 +56,10 @@
 							<a href="#" class="image fit"><img src="images/pic01.jpg" alt=""></a>
 						</div>
 						<div class="4u 12u$(mobile)">
-							<a href="#" class="image fit"><img src="images/full_cube.png" alt=""></a>
+							<a href="https://github.com/enric1994/cube">
+								<img class="image fit" id="cube" src="images/static_cube.gif" alt="">
+							</a>
+
 						</div>
 						<div class="4u$ 12u$(mobile)">
 							<a href="#" class="image fit"><img src="images/pic03.jpg" alt=""></a>
@@ -70,10 +74,12 @@
 					<h2>About me</h2>
 				</header>
 				<p>
-					I am currently a Ph.D. student funded by the Marie Skłodowska-Curie foundation at Dublin City University advised by Professor Noel O'Connor and Doctor Kevin McGuiness.
+					I am currently a Ph.D. student funded by the Marie Skłodowska-Curie foundation at Dublin City
+					University advised by Professor Noel O'Connor and Doctor Kevin McGuiness.
 				</p>
 				<p>
-					I received my B.Sc in Telecommunications Engineering (audiovisual systems specialization) at Universitat Politècnica de Catalunya, Spain in 2018.
+					I received my B.Sc in Telecommunications Engineering (audiovisual systems specialization) at
+					Universitat Politècnica de Catalunya, Spain in 2018.
 
 				</p>
 			</article>
@@ -86,16 +92,19 @@
 				<p>
 					enric.moreu.filella@gmail.com </br>
 					+353-83-388-0320 </br>
-				</br>
+					</br>
 					Room S.221 </br>
 					Dublin City University </br>
 					Glasnevin </br>
-					Dublin 9 </br> 
-				</p>			
+					Dublin 9 </br>
+				</p>
 				<p>
-					<a href="https://github.com/enric1994" class="nav icon fa-github" style="font-size:70px;color:black"></a>  
-					<a href="https://www.linkedin.com/in/enricmf" class="nav icon fa-linkedin" style="font-size:70px;color:#0077b5"></a>  
-					<a href="https://twitter.com/enric_moreu" class="nav icon fa-twitter" style="font-size:70px;color:#00acee"></a>
+					<a href="https://github.com/enric1994" class="nav icon fa-github"
+						style="font-size:70px;color:black"></a>&nbsp &nbsp
+					<a href="https://www.linkedin.com/in/enricmf" class="nav icon fa-linkedin"
+						style="font-size:70px;color:#0077b5"></a>&nbsp &nbsp
+					<a href="https://twitter.com/enric_moreu" class="nav icon fa-twitter"
+						style="font-size:70px;color:#00acee"></a>
 				</p>
 			</article>
 
@@ -108,6 +117,20 @@
 	<script src="assets/js/skel-viewport.min.js"></script>
 	<script src="assets/js/util.js"></script>
 	<script src="assets/js/main.js"></script>
+
+	<!-- Start Gif on hover -->
+	<script>
+		$(function () {
+			$("#cube").hover(
+				function () {
+					$(this).attr("src", "images/full_cube.gif");
+				},
+				function () {
+					$(this).attr("src", "images/static_cube.gif");
+				}
+			);
+		});
+	</script>
 
 </body>
 
