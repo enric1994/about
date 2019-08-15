@@ -37,7 +37,7 @@
 					<p>PhD candidate at DCU<br>Marie Curie Research Fellow</p>
 				</header>
 				<a href="#work" class="jumplink pic">
-					<video id="video1" width="420" autoplay loop playsinline muted poster="images/me4.png">
+					<video id="video1" width="420" loop playsinline muted poster="images/me4.png">
 						<source src="images/0.4.3.final.mp4" type="video/mp4">
 					</video>
 				</a>
@@ -156,6 +156,11 @@
 	<script src="assets/js/util.js"></script>
 	<script src="assets/js/main.js"></script>
 	<script> var myVideo = document.getElementById("video1"); </script>
+	<script>
+		setTimeout(function () {
+			document.getElementById("video1").play();
+		}, 2000);
+	</script>
 
 
 </body>
