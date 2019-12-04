@@ -1588,8 +1588,10 @@
 	position: relative;
 	text-align: center;
 	color: white;
-	font-size: 24px;
+	-webkit-text-stroke: 1px black;
+	font-size: 35px;
 	font-weight: 700;
+	line-height: 1;
 	}
 
 .centered {
