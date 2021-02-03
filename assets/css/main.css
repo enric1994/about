@@ -922,6 +922,7 @@
 		.image.fit {
 			display: block;
 			width: 100%;
+			border-radius: 10px;
 		}
 
 		.image.featured {
@@ -1549,6 +1550,7 @@
 				#me .pic img {
 					display: block;
 					width: 100%;
+					border-radius: 10px;
 				}
 
 				#me .pic .arrow {
